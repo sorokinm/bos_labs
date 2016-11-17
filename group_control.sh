@@ -19,11 +19,11 @@ while (( !all_done )); do  #цикл обеспечивает повторный
 	select opt in "${options[@]}"
 	do
 		case "$REPLY" in
-			1)
+			1)	./create_group.sh
 				echo "Добавить группу"
 				break
 				;;
-			2)
+			2)	./delete_group.sh
 				echo "Удалить группу" 
 				break
 				;;
