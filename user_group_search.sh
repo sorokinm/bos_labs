@@ -20,10 +20,12 @@ while (( !all_done )); do  #цикл обеспечивает повторный
 		case "$REPLY" in
 			1)
 				echo "Найти пользователя"
+				./find_user.sh
 				break
 				;;
 			2)
-				echo "Найти группу" 
+				echo "Найти группу"
+				./find_group.sh 
 				break
 				;;
 			
