@@ -19,11 +19,11 @@ while (( !all_done )); do  #цикл обеспечивает повторный
 	select opt in "${options[@]}"
 	do
 		case "$REPLY" in
-			1)
-				echo "Добавить пользователя вгруппу"
+			1)  ./AddUserToGroup.sh
+				echo "Добавить пользователя в группу"
 				break
 				;;
-			2)
+			2)	./remove_user_from_group.sh
 				echo "Удалить пользователя из группы" 
 				break
 				;;
