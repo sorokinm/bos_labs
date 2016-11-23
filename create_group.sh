@@ -1,15 +1,22 @@
 #!/bin/bash
 #create group
 
+ME=$(whoami)
+
+case $ME in
+	"root")
+
 TOTAL_LOOP=1
 
 while (( TOTAL_LOOP )); do
 
-echo "Cуществующие группы:"
+#выводит группы, которые уже есть
+echo "Cуществующие группы:"		
 echo "--------------------"
+cut -d: -f1 /etc/group | sort -d  
+echo "--------------------"
+#выводит группы, которые уже есть
 
-cut -d: -f1 /etc/group | sort -d  #выводит группы, которые уже есть
-echo "--------------------"
 
 LOOP=1
 while (( LOOP )); do
@@ -18,30 +25,38 @@ echo "Введите имя новой группы: (Введите q чтоб�
 read GROUP
 
 
-ISVALID=1
-if [ $GROUP == '-' ] || [ $GROUP == '+' ];
+#input validation	
+ISVALID=1					
+
+if [ -z $GROUP ];
 	then
 		ISVALID=0
 fi
 
-SYMB=${GROUP:0:1}
-if [ $SYMB == '-' ] || [ $SYMB == '+' ];
-		then
-		ISVALID=0
+for I in $(seq 0 $((${#GROUP}-1))); 			
+do 
+SYMB=${GROUP:$I:1}
+
+if [ $I -eq 0 ] 
+	then
+		if [ $SYMB == "-" ] || [ $SYMB == "+" ] || [ -z $SYMB  ];
+			then 
+				ISVALID=0
+				break
+		fi
+	else
+		if [ -z $SYMB  ];
+			then 
+				ISVALID=0
+				break
+		fi
+
 fi
-#-----
-#for I in $(seq 0 $((${#GROUP}-1))); 
-#do 
-#SYMB=${GROUP:$I:1}
-#if [ $SYMB == '-' ] || [ $SYMB == '+' ];
-#then 
-#	echo "true"
-#else
-#	echo "false"
-#fi
-#echo $SYMB;
-#done 
- 
+done 
+#input validation	 
+
+
+
 
 
 case $GROUP in
@@ -49,7 +64,7 @@ case $GROUP in
 		 exit 0
 	 	 break;;
 
-	*) if [ $ISVALID == '1' ]; 
+	*) if [ $ISVALID -eq 1 ]; 
 			then 
 				sudo groupadd $GROUP 
 			else
@@ -82,5 +97,9 @@ done
 
 
 done
+break;;
 
 
+*) echo "Вы не являетесь root-пользователем"
+
+esac
