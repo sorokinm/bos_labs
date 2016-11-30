@@ -18,6 +18,8 @@ cut -d: -f1 /etc/group | sort -d
 echo "---------------------------------------"
 
 
+
+
 while [ $REPEAT_GROUP_INPUT -eq 1 ]; do
 echo "Введите имя группы:"		
 read GROUP
