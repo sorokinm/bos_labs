@@ -42,18 +42,24 @@ while [[ $TOTAL_LOOP -eq 1 ]]; do
 	esac
 
 	#поиск пользователей с именем, начинающимся на input_name
-	usernames="$(grep -i ^$input_name  /etc/passwd | cut -d: -f1)"
+	usernames="$(grep -i ^$input_name  /etc/passwd)"
 	len=${#usernames}
 	# если что-то найдено
+	tmp_f="$(mktemp)"
 	if [ $len -ne 0  ] ; then
-	
-		for user in $usernames
-		do
-			lslogins $user
-		done
-	else
-		echo "Пользователей не найдено."
+		while IFS=: read name password uid gid info home_folder she; do
+			if [ $uid -ge 1000 ] ; then
+				echo "Имя пользователя $name" >> $tmp_f
+				echo " UID= $uid" >> $tmp_f
+				echo " info: $info" >> $tmp_f
+				echo " Домашняя папка $home_folder" >> $tmp_f
+				echo " Оболочка $she" >> $tmp_f
+			fi
+		done <<< "$usernames"
+		less -XFR $tmp_f
+	else echo "Пользователей не найдено."
 	fi
+	rm $tmp_f
 	
 	MICRO_LOOP=1
 
@@ -62,7 +68,6 @@ while [[ $TOTAL_LOOP -eq 1 ]]; do
 
 		case $response in
 			[Nn]*)
-				echo "Выход в меню"
 				echo "---------------------------------------"
 				exit 0;;
 			[Yy]*)

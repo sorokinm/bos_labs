@@ -45,22 +45,25 @@ while [[ $TOTAL_LOOP -eq 1 ]]; do
 	groupnames="$(grep -i ^$input_name  /etc/group )"
 	len=${#groupnames}
 	# если что-то найдено
+	tmp_f="$(mktemp)"
 	if [ $len -ne 0  ] ; then
 		while IFS=: read name password GID oter; do
-			printf "Имя группы $name\n GID= $GID \n"
+			printf "Имя группы $name\n GID= $GID \n" >> $tmp_f
 			participants="$(lid -g $name)"
 			if [ ${#participants} -ne 0 ] ; then
-				echo " Пользователи группы:"
+				echo " Пользователи группы:" >> $tmp_f
 				for member in $participants
 				do
-					echo " $member"
+					echo " $member" >> $tmp_f
 				done
-				printf "\n"
-			else printf "Пользователей не найдено.\n\n"
+				printf "\n" >> $tmp_f
+			else printf " Нет пользователей в группе.\n\n" >> $tmp_f
 			fi
 		done <<< "$groupnames"
-	else echo "Групп не найдено."
+		less -XFR $tmp_f
+	else echo "Групп не найдено."	
 	fi
+	rm $tmp_f
 
 	MICRO_LOOP=1
 
@@ -69,7 +72,6 @@ while [[ $TOTAL_LOOP -eq 1 ]]; do
 
 		case $response in
 			[Nn]*)
-				echo "Выход в меню"
 				echo "---------------------------------------"
 				exit 0;;
 			[Yy]*)
