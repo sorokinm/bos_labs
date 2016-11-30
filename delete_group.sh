@@ -23,6 +23,8 @@ echo "Введите имя группы, которую хотите удали
 read GROUP
 
 
+
+
 #input validation	
 ISVALID=1					
 
