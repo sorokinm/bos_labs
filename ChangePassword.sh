@@ -64,7 +64,7 @@ while((GENLOOP));do
 				exit 0;;
 				*)
 				echo "Введите y/n"
-		esac
+	esac
 done
 
 
