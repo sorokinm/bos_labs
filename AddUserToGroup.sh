@@ -1,13 +1,19 @@
 #!/bin/bash
 #add user to group
+function add_user_to_group () {
+echo "
+Справка:
+Для выхода в меню нажмите --back или -b
+Для вызова справки --help или -h
+"
+}
 
-
+echo "---------------------------------------"
 if [[ $(whoami) != root ]]; then
 	echo "Выполните вход в root"
+	echo "---------------------------------------"
 	exit 1
 fi
-
-
 cut -d : -f1 /etc/passwd | cat -n | awk '$1=$1' > AllUsers.txt #вывод пользователей из файла etc/passwd в фаил
 cat AllUsers.txt
 GENLOOP=1
@@ -16,6 +22,16 @@ while((GENLOOP));do
 	while((LOOP)); do
 		echo "Введите имя пользователя или его порядковый номер"
 		read user
+		case $user in
+		"--help"|"-h")
+			add_user_to_group
+			continue
+			;;
+		"--back"|"-b")
+			echo "---------------------------------------"
+			exit 0;;
+		*);;
+	        esac
 		grep -w $user AllUsers.txt | cut -d' ' -f2 > FoundUser.txt #поиск указанного пользователя и вывод его в фаил
 		Len=$(stat -c%s FoundUser.txt) #количество байтов в файле
 		case $Len in      
@@ -54,11 +70,22 @@ while((GENLOOP));do
 		esac
 	done
 	sudo usermod -aG  $FoundGroup $FoundUser #добавление пользователя в группу
-	echo "Пользователь успешно добавлен!Повторить?(y/n)"
-	read answer 
-	if [[ $answer == "n" ]]
-	then
-	 break
-	fi
+	read -p  "Повторить?(y/n) " response
+        case $response in
+			[Nn]*)
+				echo "---------------------------------------"
+				rm AllUsers.txt
+				exit 0;;
+			[Yy]*)
+				TOTAL_LOOP=1
+				break;;
+	"--help"|"-h")
+				add_user_to_group
+				continue;;
+	"--back"|"-b")
+				exit 0;;
+				*)
+				echo "Введите y/n"
+	esac
 done
 
