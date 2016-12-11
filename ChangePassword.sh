@@ -25,7 +25,7 @@ while((GENLOOP));do
 		read user
 	 	case $user in
 	        "--help"|"-h"*)
-			found_user_help
+			change_password
 			continue;;
 	        "--back"|"-b")
 			echo "---------------------------------------"
@@ -47,7 +47,7 @@ while((GENLOOP));do
 		      ;; # если количество байт не равно 0 то считываем имя пользователя в переменную
 		esac
 	done
-	sudo passwd $FoundUser #изменение пароля
+	passwd $FoundUser #изменение пароля
 	read -p  "Повторить?(y/n) " response
 	case $response in
 			[Nn]*)
@@ -55,8 +55,7 @@ while((GENLOOP));do
 				rm Users.txt
 				exit 0;;
 			[Yy]*)
-				TOTAL_LOOP=1
-				break;;
+				continue;;
 		"--help"|"-h")
 				change_password
 				continue;;
