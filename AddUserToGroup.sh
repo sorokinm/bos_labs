@@ -77,8 +77,7 @@ while((GENLOOP));do
 				rm AllUsers.txt
 				exit 0;;
 			[Yy]*)
-				TOTAL_LOOP=1
-				break;;
+				continue;;
 	"--help"|"-h")
 				add_user_to_group
 				continue;;
