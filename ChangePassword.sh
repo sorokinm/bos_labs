@@ -28,6 +28,10 @@ while((GENLOOP));do
 		if [ ${#user} -eq 0 ]; then
 			continue
 		fi
+		s=${user:0:1}
+		if [ $s == "-" ]; then
+			continue
+		fi
 	 	case $user in
 	        "--help"|"-h"*)
 			change_password
