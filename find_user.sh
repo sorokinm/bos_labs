@@ -3,7 +3,7 @@ function found_user_help () {
 echo "
 
 Справка:
-Для выхода в меню нажмите --back или -b
+Для выхода в меню нажмите --quit или -q
 Для вызова справки --help или -h
 
 "
@@ -19,13 +19,13 @@ fi
 TOTAL_LOOP=1
 while [[ $TOTAL_LOOP -eq 1 ]]; do
 
-	echo "Введите имя пользователя или часть имени"
+	echo "Введите имя пользователя или часть имени (Выход -q, справка -h)"
 	# проверка на пустой ввод
 	while read input_name 
 	do
 		input_len=${#input_name}
 		if [ $input_len -eq 0 ] ; then
-			printf "Вы ввели пустую строку!\nВведите имя пользователя или часть имени\n"
+			printf "Вы ввели пустую строку!\nВведите имя пользователя или часть имени  (Выход -q, справка -h)\n"
 		else break;
 		fi
 	done
@@ -35,7 +35,7 @@ while [[ $TOTAL_LOOP -eq 1 ]]; do
 			found_user_help
 			continue
 			;;
-		"--back"|"-b")
+		"--quit"|"-q")
 			echo "---------------------------------------"
 			exit 0;;
 		*);;
@@ -76,7 +76,7 @@ while [[ $TOTAL_LOOP -eq 1 ]]; do
 	"--help"|"-h")
 				found_user_help
 				continue;;
-	"--back"|"-b")
+	"--quit"|"-q")
 				exit 0;;
 				*)
 				echo "Введите y/n"

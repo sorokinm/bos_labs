@@ -21,6 +21,12 @@ if [ "$1" == "--help" ] ; then
 	show_help
 else 
 	echo "С помощью данной программы Вы сможете управлять пользователями и группами"
+	
+	if [[ $(whoami) != root ]]; then
+		echo "Выполните вход в root"
+		exit 1
+	fi
+
 	./main_menu.sh
 fi;
 
