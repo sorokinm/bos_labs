@@ -81,10 +81,12 @@ while (( !all_done )); do  #цикл обеспечивает повторный
 				;;
 			4)
 				echo "Добавление пользователя в группу"
+				./AddUserToGroup.sh
 				break
 				;;
 			5)
 				echo "Смена пароля пользователя"
+				./ChangePassword.sh
 				break
 				;;
 			"help")
