@@ -26,6 +26,9 @@ while((GENLOOP));do
 	while((LOOP)); do
 		echo "Введите имя пользователя или его порядковый номер"
 		read user
+		if [ ${#user} -eq 0 ]; then
+			continue
+		fi
 		case $user in
 		"--help"|"-h")
 			add_user_to_group
@@ -57,6 +60,9 @@ while((GENLOOP));do
 	while((LOOP1)); do
 		echo "Введите имя или порядковый номер группы"
 		read group
+		if [ ${#group} -eq 0 ]; then
+			continue
+		fi
 		grep -w $group $tmp_AllGroups | cut -d' ' -f2 > $tmp_FoundGroup #поиск заданной группы
 		Len1=$(stat -c%s $tmp_FoundGroup ) #количество байт в файле
 		case $Len1 in

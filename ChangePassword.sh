@@ -25,6 +25,9 @@ while((GENLOOP));do
 	while((LOOP)); do
 		echo "Введите имя пользователя или его порядковый номер"
 		read user
+		if [ ${#user} -eq 0 ]; then
+			continue
+		fi
 	 	case $user in
 	        "--help"|"-h"*)
 			change_password
