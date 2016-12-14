@@ -15,8 +15,10 @@ if [[ $(whoami) != root ]]; then
 	echo "---------------------------------------"
 	exit 1
 fi
-cut -d : -f1 /etc/passwd | cat -n | awk '$1=$1' > Users.txt #вывод пользователей из файла etc/passwd в фаил
-cat Users.txt
+tmp_Users="$(mktemp)"
+tmp_FoundUser1="$(mktemp)"
+cut -d : -f1 /etc/passwd | cat -n | awk '$1=$1' > $tmp_Users #вывод пользователей из файла etc/passwd в фаил
+cat $tmp_Users
 GENLOOP=1
 while((GENLOOP));do
 	LOOP=1
@@ -32,17 +34,17 @@ while((GENLOOP));do
 			exit 0;;
 	        *);;
 	        esac
-		grep -w $user Users.txt | cut -d' ' -f2 > FoundUser1.txt #поиск указанного пользователя и вывод его в фаил
-		Len=$(stat -c%s FoundUser1.txt) #количество байтов в файле
+		grep -w $user $tmp_Users | cut -d' ' -f2 > $tmp_FoundUser1 #поиск указанного пользователя и вывод его в фаил
+		Len=$(stat -c%s $tmp_FoundUser1) #количество байтов в файле
 		case $Len in
 		      0)echo "Такого пользователя нет,повторите ввод"
-			 rm FoundUser1.txt
+			 rm $tmp_FoundUser1
 		      ;;
 		      *)while read line
 			do FoundUser=$line
-			done < FoundUser1.txt
+			done < $tmp_FoundUser1
 			echo "$FoundUser"
-			rm FoundUser1.txt
+			rm $tmp_FoundUser1
 			break
 		      ;; # если количество байт не равно 0 то считываем имя пользователя в переменную
 		esac
@@ -52,7 +54,7 @@ while((GENLOOP));do
 	case $response in
 			[Nn]*)
 				echo "---------------------------------------"
-				rm Users.txt
+				rm $tmp_Users
 				exit 0;;
 			[Yy]*)
 				continue;;
