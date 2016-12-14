@@ -21,11 +21,11 @@ while (( !all_done )); do  #цикл обеспечивает повторный
 	do
 		case "$REPLY" in
 			1)	./create_group.sh
-				echo "Добавить группу"
+				#"Добавить группу"
 				break
 				;;
 			2)	./delete_group.sh
-				echo "Удалить группу" 
+				#"Удалить группу" 
 				break
 				;;
 			3)

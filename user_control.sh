@@ -20,15 +20,16 @@ while(( !al_done )); do
 Введите имя пользователя: "
 	read username
 	useradd $username 2> /dev/null
-
-	if [ $? == "0" ]
+	X=$?
+	
+	if [ $X == "0" ]
 	then
 		echo "Новый пользователь успешно добавлен!"
-	elif [ $? == "1" ]
+	elif [ $X == "9" ]
 	then
 
 		echo "Данный пользователь уже существует!" >&2 
-	elif [ $? == "3" ]
+	elif [ $X == "3" ]
 	then
 		echo "Неверное имя пользователя!" >&2
 	else
@@ -68,24 +69,27 @@ while (( !all_done )); do  #цикл обеспечивает повторный
 	do
 		case "$REPLY" in
 			1)
+				# добавление пользователя
 				add_user
 				break
 				;;
 			2)
+				#удаление пользователя
 				./delete_user.sh
 				break
 				;;
 			3)
+				#блокировка
 				./block_user.sh
 				break				
 				;;
 			4)
-				echo "Добавление пользователя в группу"
+				#"Добавление пользователя в группу"
 				./AddUserToGroup.sh
 				break
 				;;
 			5)
-				echo "Смена пароля пользователя"
+				#"Смена пароля пользователя"
 				./ChangePassword.sh
 				break
 				;;

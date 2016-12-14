@@ -19,18 +19,18 @@ while (( !all_done )); do  #цикл обеспечивает повторный
 	do
 		case "$REPLY" in
 			1)
-				echo "Найти пользователя"
+				# "Найти пользователя"
 				./find_user.sh
 				break
 				;;
 			2)
-				echo "Найти группу"
+				# "Найти группу"
 				./find_group.sh 
 				break
 				;;
 			
 			"q")
-				echo "Возврат назад"
+				# "Возврат назад"
 				all_done=1
 				break
 				;;
