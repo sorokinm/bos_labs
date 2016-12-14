@@ -29,6 +29,10 @@ while((GENLOOP));do
 		if [ ${#user} -eq 0 ]; then
 			continue
 		fi
+		s=${user:0:1}
+		if [ $s == "-" ]; then
+			continue
+		fi
 		case $user in
 		"--help"|"-h")
 			add_user_to_group
@@ -61,6 +65,10 @@ while((GENLOOP));do
 		echo "Введите имя или порядковый номер группы"
 		read group
 		if [ ${#group} -eq 0 ]; then
+			continue
+		fi
+		v=${group:0:1}
+		if [ $v == "-" ]; then
 			continue
 		fi
 		grep -w $group $tmp_AllGroups | cut -d' ' -f2 > $tmp_FoundGroup #поиск заданной группы
