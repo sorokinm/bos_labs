@@ -14,8 +14,12 @@ if [[ $(whoami) != root ]]; then
 	echo "---------------------------------------"
 	exit 1
 fi
-cut -d : -f1 /etc/passwd | cat -n | awk '$1=$1' > AllUsers.txt #вывод пользователей из файла etc/passwd в фаил
-cat AllUsers.txt
+tmp_AllUsers="$(mktemp)"
+tmp_FoundUser="$(mktemp)"
+tmp_AllGroups="$(mktemp)"
+tmp_FoundGroup="$(mktemp)"
+cut -d : -f1 /etc/passwd | cat -n | awk '$1=$1' > $tmp_AllUsers #вывод пользователей из файла etc/passwd в фаил
+cat $tmp_AllUsers
 GENLOOP=1
 while((GENLOOP));do
 	LOOP=1
@@ -32,39 +36,39 @@ while((GENLOOP));do
 			exit 0;;
 		*);;
 	        esac
-		grep -w $user AllUsers.txt | cut -d' ' -f2 > FoundUser.txt #поиск указанного пользователя и вывод его в фаил
-		Len=$(stat -c%s FoundUser.txt) #количество байтов в файле
+		grep -w $user $tmp_AllUsers | cut -d' ' -f2 > $tmp_FoundUser #поиск указанного пользователя и вывод его в фаил
+		Len=$(stat -c%s $tmp_FoundUser) #количество байтов в файле
 		case $Len in      
 		      0)echo "Такого пользователя нет,повторите ввод"
-			 rm FoundUser.txt
+			 rm $tmp_FoundUser
 		      ;;
 		      *)while read line
 			do FoundUser=$line
-			done < FoundUser.txt
+			done < $tmp_FoundUser
 			echo "$FoundUser"
-			rm FoundUser.txt
+			rm $tmp_FoundUser
 			break
 		      ;; # если количество байт не равно 0 то считываем имя пользователя в переменную
 		esac
 	done
-	cut -d : -f1 /etc/group | cat -n | awk '$1=$1' > AllGroups.txt #вывод пользователей в фаил
-	cat AllGroups.txt
+	cut -d : -f1 /etc/group | cat -n | awk '$1=$1' > $tmp_AllGroups #вывод пользователей в фаил
+	cat $tmp_AllGroups
 	LOOP1=1
 	while((LOOP1)); do
 		echo "Введите имя или порядковый номер группы"
 		read group
-		grep -w $group AllGroups.txt | cut -d' ' -f2 > FoundGroup.txt #поиск заданной группы
-		Len1=$(stat -c%s FoundGroup.txt) #количество байт в файле
+		grep -w $group $tmp_AllGroups | cut -d' ' -f2 > $tmp_FoundGroup #поиск заданной группы
+		Len1=$(stat -c%s $tmp_FoundGroup ) #количество байт в файле
 		case $Len1 in
 		      0)echo "Такой группы  нет"
-			 rm FoundGroup.txt
+			 rm $tmp_FoundGroup 
 		      ;;
 		      *) 
 			while read line
 			do FoundGroup=$line
-			done < FoundGroup.txt
+			done < $tmp_FoundGroup 
 			echo "$FoundGroup"
-			rm FoundGroup.txt
+			rm $tmp_FoundGroup 
 			break 
 		      ;; #если число байт не 0 ,то записываем введенное значение в переменную
 		esac
@@ -74,7 +78,7 @@ while((GENLOOP));do
         case $response in
 			[Nn]*)
 				echo "---------------------------------------"
-				rm AllUsers.txt
+				rm $tmp_AllUsers
 				exit 0;;
 			[Yy]*)
 				continue;;
