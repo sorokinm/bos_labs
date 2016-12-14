@@ -32,7 +32,7 @@ read GROUP
 #input validation	
 ISVALID=1					
 
-if [ -z $GROUP ];
+if [[ -z $GROUP ]];
 	then
 		ISVALID=0
 fi
@@ -60,6 +60,13 @@ done
 #input validation end	 
 
 
+if [ $ISVALID -eq 1 ];				#check if the group already exists
+	then
+		FOUND_IN_LIST=$(cut -d: -f1 /etc/group | sort -d | grep +x "$GROUP")
+		if [[ -n $FOUND_IN_LIST ]];
+			then ISVALID=0
+		fi
+fi
 
 
 
@@ -72,7 +79,7 @@ case $GROUP in
 			then 
 				sudo groupadd $GROUP 
 			else
-				echo "Недопустимое имя"
+				echo "Введено недопустимое имя или группа с указанным именем уже существует"
 	   fi  #создает группу или выводит ошибку
 	   break;; 
 esac
@@ -87,8 +94,8 @@ while (( MICRO_LOOP )); do
 read -p "Создать другую группу? (y/n) " RESPONSE #вдруг нужно еще групп
 
 case $RESPONSE in
-[Yy]* ) $MICRO_LOOP=0
-		$TOTAL_LOOP=1
+[Yy]* ) MICRO_LOOP=0
+		TOTAL_LOOP=1
 		break;;
 [Nn]* ) echo "Выход из программы"
 		exit 0

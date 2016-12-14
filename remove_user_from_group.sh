@@ -21,13 +21,14 @@ echo "---------------------------------------"
 
 
 while [ $REPEAT_GROUP_INPUT -eq 1 ]; do
-echo "Введите имя группы:"		
+echo "Введите имя группы:  (q - выход)"		
 read GROUP
+
 
 #input validation	
 GROUP_ISVALID=1					
 
-if [ -z $GROUP ];
+if [[ -z $GROUP ]];
 	then
 		GROUP_ISVALID=0
 fi
@@ -59,13 +60,18 @@ FOUND_IN_LIST=""
 
 if [ $GROUP_ISVALID -eq 1 ];
 	then
-		FOUND_IN_LIST=$(cut -d: -f1 /etc/group | grep "$GROUP")
+		if [ $GROUP == "q" ];		#exit if you wish
+			then
+				echo "Выход из программы..."
+				exit 0
+		fi	
+		FOUND_IN_LIST=$(cut -d: -f1 /etc/group | grep -x "$GROUP")
 fi
 
 
 
 
-if [ $GROUP_ISVALID -eq 0 ] || [ -z $FOUND_IN_LIST ];
+if [ $GROUP_ISVALID -eq 0 ] || [[ -z $FOUND_IN_LIST ]];
 	then
 		echo "Введено недопустимое или несуществующее имя группы. Повторите ввод"
 	else
@@ -81,7 +87,7 @@ if [ $GROUP == "q" ];	#если ввели q то выходим
 	then
 		exit 0
 	else 
-		USER_LIST=$(cut -d: -f1,4 /etc/group | grep "$GROUP" | cut -d: -f2)
+		USER_LIST=$(cut -d: -f1,4 /etc/group | grep -x "$GROUP" | cut -d: -f2)
 		USER=""
 
 		if [ -z $USER_LIST ];
@@ -98,11 +104,11 @@ if [ $GROUP == "q" ];	#если ввели q то выходим
 				REPEAT_USER_NAME_INPUT=1
 
 				while [ $REPEAT_USER_NAME_INPUT -eq 1 ]; do
-				echo "Введите имя или порядковый номер пользователя, которого хотите удалить:"
+				echo "Введите имя или порядковый номер пользователя, которого хотите удалить: (введите q для выхода)"
 				read NAME 
 
 				USER_NAME_IS_VALID=1		#валидируем ввод на пустую строку и ключи
-				if [ -z $NAME ];
+				if [[ -z $NAME ]];
 					then
 						USER_NAME_IS_VALID=0
 				fi
@@ -149,7 +155,6 @@ if [ $GROUP == "q" ];	#если ввели q то выходим
 				if [ $IS_NUMBER -eq 1 ]; 
 				then 
 				  if [ $NAME -le $USER_COUNT ] && [ $NAME != "0" ];
-
 					then 												#если мы ввели индекс
 						echo $USER_LIST  | tr ',' '\n' > /tmp/temp
 						USER=$(head -n $NAME /tmp/temp | tail -n 1)						
@@ -157,14 +162,20 @@ if [ $GROUP == "q" ];	#если ввели q то выходим
 						REPEAT_USER_NAME_INPUT=0
 				  fi
 				
-				else												#если мы ввели имя, то попытаемся его найти
+				else
+						if [ $NAME == "q" ];		#exit if you wish
+							then
+							echo "Выход из программы..."
+							exit 0
+						fi	
+												#если мы ввели имя, то попытаемся его найти
 						USER_FOUND_IN_LIST=""
 						echo $USER_LIST  | tr ',' '\n' > /tmp/temp
-						USER_FOUND_IN_LIST=$(cat /tmp/temp | grep "$NAME")
+						USER_FOUND_IN_LIST=$(cat /tmp/temp | grep -x "$NAME")
 						USER_COUNT=$(cat /tmp/temp | wc -l)
 						rm /tmp/temp
 
-						if [ -z $USER_FOUND_IN_LIST ];
+						if [[ -z $USER_FOUND_IN_LIST ]];
 					 		then 
 					 			echo "Введено несуществующее имя или индекс. Повторите ввод"
 								REPEAT_USER_NAME_INPUT=1
@@ -177,13 +188,17 @@ if [ $GROUP == "q" ];	#если ввели q то выходим
 				  
 				fi
 
-				else
+				else				
 					echo "Введено несуществующее имя или индекс. Повторите ввод"
 					REPEAT_USER_NAME_INPUT=1
 				fi
 				done
 
-				sudo deluser "$USER" "$GROUP"
+				
+ 
+
+				gpasswd -d "$USER" "$GROUP"
+				#sudo deluser "$USER" "$GROUP"
 				echo "Пользователь $USER успешно удален из группы $GROUP"
 
 		fi

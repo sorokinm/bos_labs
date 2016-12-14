@@ -28,7 +28,7 @@ read GROUP
 #input validation	
 ISVALID=1					
 
-if [ -z $GROUP ];
+if [[ -z $GROUP ]];
 	then
 		ISVALID=0
 fi
@@ -55,6 +55,14 @@ fi
 done 
 #input validation	 
 
+if [ $ISVALID -eq 1 ];
+	then
+		FOUND_IN_LIST=$(cut -d: -f1 /etc/group | sort -d | grep +x "$GROUP")
+		if [[ -z $FOUND_IN_LIST ]];
+			then ISVALID=0
+		fi
+fi
+
 
 case $GROUP in
 	"q") echo "Выход из программы"
@@ -65,7 +73,7 @@ case $GROUP in
 	   		then
 				sudo groupdel $GROUP  #удаляет группу или выводит ошибку
 	   		else
-				echo "Недопустимое имя"
+				echo "Введено недопустимое или несуществующее имя"
 	   fi
 	   break;; 
 esac
@@ -80,8 +88,8 @@ while (( MICRO_LOOP )); do
 read -p "Удалить другую группу? (y/n) " RESPONSE #вдруг нужно еще меньше групп
 
 case $RESPONSE in
-[Yy]* ) $MICRO_LOOP=0
-		$TOTAL_LOOP=1
+[Yy]* ) MICRO_LOOP=0
+		TOTAL_LOOP=1
 		break;;
 [Nn]* ) echo "Выход из программы"
 		exit 0
