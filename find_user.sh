@@ -31,6 +31,9 @@ while [[ $TOTAL_LOOP -eq 1 ]]; do
 	done
 
 	case $input_name in
+		*[[:space:]]*)
+			echo "Имена нужно вводить по одному!"
+			continue;;
 		"--help"|"-h")
 			found_user_help
 			continue
@@ -47,8 +50,10 @@ while [[ $TOTAL_LOOP -eq 1 ]]; do
 	# если что-то найдено
 	tmp_f="$(mktemp)"
 	if [ $len -ne 0  ] ; then
+		is_printed=0
 		while IFS=: read name password uid gid info home_folder she; do
-			if [ $uid -ge 1000 ] ; then
+			if [ $uid -ge 1000 ] && [ $uid -ne 65534 ]; then
+				let is_printed=1
 				echo "Имя пользователя $name" >> $tmp_f
 				echo " UID= $uid" >> $tmp_f
 				echo " info: $info" >> $tmp_f
@@ -57,6 +62,9 @@ while [[ $TOTAL_LOOP -eq 1 ]]; do
 			fi
 		done <<< "$usernames"
 		less -XFR $tmp_f
+		if [ $is_printed -eq 0 ]; then
+			echo "Пользователей не найдено."
+		fi
 	else echo "Пользователей не найдено."
 	fi
 	rm $tmp_f

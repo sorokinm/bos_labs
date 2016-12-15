@@ -32,6 +32,9 @@ while [[ $TOTAL_LOOP -eq 1 ]]; do
 	done
 
 	case $input_name in
+	*[[:space:]]*)
+		echo "Имена нужно вводить по одному!"
+		continue;;
 	"--help"|"-h"*)
 			found_user_help
 			continue;;
