@@ -91,15 +91,19 @@ if [[ "$GROUP" == "-q" ]];	#если ввели q то выходим
 	then
 		exit 0
 	else 
-		USER_LIST=$(cut -d: -f1,4 /etc/group | grep -w "$GROUP" | cut -d: -f2)
+		#USER_LIST=$(cut -d: -f1,4 /etc/group | grep -w "$GROUP" | cut -d: -f2)
+		
+		GID=$(cut -d: -f1,3 /etc/group | grep -w "$GROUP" | cut -d: -f2)				
+		USER_LIST=$(cut -d: -f3,4 /etc/group | grep -w "$GID" | cut -d: -f2)		
+		
 		USER=""
 
-		if [ -z $USER_LIST ];
+		if [[ -z "$USER_LIST" ]];
 			then 
-				echo "В группе нет пользователей"
+				echo "В группе нет пользователей, либо группа является первичной для какого-либо пользователя и содержит его одного (удаление невозможно)"
 			else
 				echo "Список пользователей:"
-				echo $USER_LIST  | tr ',' '\n' > /tmp/temp
+				echo "$USER_LIST"  | tr ',' '\n' > /tmp/temp
 				cat -n /tmp/temp 
 				rm /tmp/temp
 
