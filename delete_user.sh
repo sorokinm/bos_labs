@@ -13,6 +13,10 @@ while ((1));do
 	cat $tmp_result
 	echo "Введите имя пользователя или порядковый номер"
 	read choose
+	case $choose in
+	-*)echo "Пользователь не найден" 
+		continue;;	
+	esac
 	repeats=0
 	grep -w $choose $tmp_result | cut -d' ' -f2 > $tmp_findResult #выбор из списка пользователей имени введенного пользователя
 	findResultLen=$(stat -c%s $tmp_findResult) #определение количества символов в файле с именем пользователя (если длина файла 0, то вывести "Пользователь не найден")
