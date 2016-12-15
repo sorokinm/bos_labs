@@ -21,8 +21,17 @@ echo "---------------------------------------"
 
 
 while [ $REPEAT_GROUP_INPUT -eq 1 ]; do
-echo "Введите имя группы:  (q - выход)"		
+echo "Введите имя группы:  (-q - выход)"		
 read GROUP
+
+
+if [[ "$GROUP" == "-q" ]];		#exit if you wish
+	then
+		echo "Выход из программы..."
+		exit 0
+fi
+
+
 
 
 #input validation	
@@ -59,13 +68,8 @@ done
 FOUND_IN_LIST=""
 
 if [ $GROUP_ISVALID -eq 1 ];
-	then
-		if [ $GROUP == "q" ];		#exit if you wish
-			then
-				echo "Выход из программы..."
-				exit 0
-		fi	
-		FOUND_IN_LIST=$(cut -d: -f1 /etc/group | grep -x "$GROUP")
+	then	
+		FOUND_IN_LIST=$(cut -d: -f1 /etc/group | grep -w "$GROUP")
 fi
 
 
@@ -83,11 +87,11 @@ done
 
 
 
-if [ $GROUP == "q" ];	#если ввели q то выходим
+if [[ "$GROUP" == "-q" ]];	#если ввели q то выходим
 	then
 		exit 0
 	else 
-		USER_LIST=$(cut -d: -f1,4 /etc/group | grep -x "$GROUP" | cut -d: -f2)
+		USER_LIST=$(cut -d: -f1,4 /etc/group | grep -w "$GROUP" | cut -d: -f2)
 		USER=""
 
 		if [ -z $USER_LIST ];
@@ -104,8 +108,14 @@ if [ $GROUP == "q" ];	#если ввели q то выходим
 				REPEAT_USER_NAME_INPUT=1
 
 				while [ $REPEAT_USER_NAME_INPUT -eq 1 ]; do
-				echo "Введите имя или порядковый номер пользователя, которого хотите удалить: (введите q для выхода)"
+				echo "Введите имя или порядковый номер пользователя, которого хотите удалить: (введите -q для выхода)"
 				read NAME 
+				
+				if [[ "$NAME" == "-q" ]];
+					then
+						echo "Выход из программы"
+						exit  0
+				fi
 
 				USER_NAME_IS_VALID=1		#валидируем ввод на пустую строку и ключи
 				if [[ -z $NAME ]];
@@ -163,15 +173,10 @@ if [ $GROUP == "q" ];	#если ввели q то выходим
 				  fi
 				
 				else
-						if [ $NAME == "q" ];		#exit if you wish
-							then
-							echo "Выход из программы..."
-							exit 0
-						fi	
 												#если мы ввели имя, то попытаемся его найти
 						USER_FOUND_IN_LIST=""
 						echo $USER_LIST  | tr ',' '\n' > /tmp/temp
-						USER_FOUND_IN_LIST=$(cat /tmp/temp | grep -x "$NAME")
+						USER_FOUND_IN_LIST=$(cat /tmp/temp | grep -w "$NAME")
 						USER_COUNT=$(cat /tmp/temp | wc -l)
 						rm /tmp/temp
 

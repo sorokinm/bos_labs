@@ -22,11 +22,15 @@ echo "--------------------"
 LOOP=1
 while (( LOOP )); do
 
-echo "Введите имя новой группы: (Введите q чтобы выйти)" #ввод названия группы
+echo "Введите имя новой группы: (Введите -q чтобы выйти)" #ввод названия группы
 read GROUP
 
 
-
+if [[ "$GROUP" == "-q" ]];
+	then
+		echo "Выход из программы..."
+		exit 0
+fi
 
 
 #input validation	
@@ -62,7 +66,7 @@ done
 
 if [ $ISVALID -eq 1 ];				#check if the group already exists
 	then
-		FOUND_IN_LIST=$(cut -d: -f1 /etc/group | sort -d | grep +x "$GROUP")
+		FOUND_IN_LIST=$(cut -d: -f1 /etc/group | grep -w "$GROUP")
 		if [[ -n $FOUND_IN_LIST ]];
 			then ISVALID=0
 		fi
@@ -71,9 +75,9 @@ fi
 
 
 case $GROUP in
-	"q") echo "Выход из программы"
-		 exit 0
-	 	 break;;
+#	"q") echo "Выход из программы"
+#		 exit 0
+#	 	 break;;
 
 	*) if [ $ISVALID -eq 1 ]; 
 			then 
