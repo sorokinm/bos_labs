@@ -3,7 +3,7 @@
 function add_user_to_group () {
 echo "
 Справка:
-Для выхода в меню нажмите --back или -b
+Для выхода в меню нажмите --quit или -q
 Для вызова справки --help или -h
 "
 }
@@ -24,25 +24,26 @@ GENLOOP=1
 while((GENLOOP));do
 	LOOP=1
 	while((LOOP)); do
-		echo "Введите имя пользователя или его порядковый номер"
+		echo "Введите имя пользователя или его порядковый номер (для выхода -q)"
 		read user
 		if [ ${#user} -eq 0 ]; then
 			continue
 		fi
-		s=${user:0:1}
-		if [ $s == "-" ]; then
-			continue
-		fi
+
 		case $user in
 		"--help"|"-h")
 			add_user_to_group
 			continue
 			;;
-		"--back"|"-b")
+		"--quit"|"-q")
 			echo "---------------------------------------"
 			exit 0;;
 		*);;
 	        esac
+		s=${user:0:1}
+		if [ $s == "-" ]; then
+			continue
+		fi
 		grep -w $user $tmp_AllUsers | cut -d' ' -f2 > $tmp_FoundUser #поиск указанного пользователя и вывод его в фаил
 		Len=$(stat -c%s $tmp_FoundUser) #количество байтов в файле
 		case $Len in      
@@ -62,8 +63,16 @@ while((GENLOOP));do
 	cat $tmp_AllGroups
 	LOOP1=1
 	while((LOOP1)); do
-		echo "Введите имя или порядковый номер группы"
+		echo "Введите имя или порядковый номер группы (для выхода -q)"
 		read group
+		case $group in
+			"--help"|"-h")
+						add_user_to_group
+						continue;;
+			"--quit"|"-q")
+						exit 0;;
+		esac
+		
 		if [ ${#group} -eq 0 ]; then
 			continue
 		fi
@@ -87,7 +96,8 @@ while((GENLOOP));do
 		      ;; #если число байт не 0 ,то записываем введенное значение в переменную
 		esac
 	done
-	sudo usermod -aG  $FoundGroup $FoundUser #добавление пользователя в группу
+	#sudo usermod -aG  $FoundGroup $FoundUser #добавление пользователя в группу
+	gpasswd -a $FoundUser $FoundGroup
 	read -p  "Повторить?(y/n) " response
         case $response in
 			[Nn]*)
@@ -99,7 +109,7 @@ while((GENLOOP));do
 	"--help"|"-h")
 				add_user_to_group
 				continue;;
-	"--back"|"-b")
+	"--quit"|"-q")
 				exit 0;;
 				*)
 				echo "Введите y/n"

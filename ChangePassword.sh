@@ -3,7 +3,7 @@
 function change_password () {
 echo "
 Справка:
-Для выхода в меню нажмите --back или -b
+Для выхода в меню нажмите --quit или -q
 Для вызова справки --help или -h
 "
 }
@@ -28,19 +28,20 @@ while((GENLOOP));do
 		if [ ${#user} -eq 0 ]; then
 			continue
 		fi
-		s=${user:0:1}
-		if [ $s == "-" ]; then
-			continue
-		fi
+
 	 	case $user in
 	        "--help"|"-h"*)
 			change_password
 			continue;;
-	        "--back"|"-b")
+	        "--quit"|"-q")
 			echo "---------------------------------------"
 			exit 0;;
 	        *);;
 	        esac
+		s=${user:0:1}
+		if [ $s == "-" ]; then
+			continue
+		fi
 		grep -w $user $tmp_Users | cut -d' ' -f2 > $tmp_FoundUser1 #поиск указанного пользователя и вывод его в фаил
 		Len=$(stat -c%s $tmp_FoundUser1) #количество байтов в файле
 		case $Len in
@@ -68,7 +69,8 @@ while((GENLOOP));do
 		"--help"|"-h")
 				change_password
 				continue;;
-		"--back"|"-b")
+		"--quit"|"-q")
+				echo "---------------------------------------"
 				exit 0;;
 				*)
 				echo "Введите y/n"
