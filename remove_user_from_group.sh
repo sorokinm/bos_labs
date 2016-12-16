@@ -162,6 +162,11 @@ if [[ "$GROUP" == "-q" ]];	#если ввели q то выходим
 					esac
 				done
 
+				U=$(cut -d: -f1 /etc/passwd | grep -w "$NAME")
+				if [[ -n "$U" ]];
+					then IS_NUMBER=0
+				fi
+
 				echo $USER_LIST  | tr ',' '\n' > /tmp/temp	
 				USER_COUNT=$(cat /tmp/temp | wc -l)
 				rm /tmp/temp
